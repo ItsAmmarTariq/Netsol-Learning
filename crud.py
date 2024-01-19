@@ -14,6 +14,7 @@ class student(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     age = Column(Integer)
+    cnic = Column(Integer)
     grade = Column(String(50))
 
 
@@ -57,13 +58,13 @@ def delete_data(student_id):
 # add_new()
 
 
-fetch_data()
-delete_data(8)
-fetch_data()
+# fetch_data()
+# delete_data(8)
+# fetch_data()
 
 session.close()
 
 
-session.delete()
+# session.delete()
 
 
