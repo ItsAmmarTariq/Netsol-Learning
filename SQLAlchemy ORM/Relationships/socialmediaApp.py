@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, ForeignKey, String, Integer, Column
 from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import validates
 
 import uuid
 
@@ -17,6 +18,13 @@ class Users(Base):
     lastname = Column(String)
     profilename = Column(String)
     email = Column(String)
+    @validates("email")
+    def validate_email(self, key, email):
+        if "@" not in email:
+            raise ValueError("failed simple email validation")
+        
+        return email
+    
 
     def __init__(self, firstname, lastname, profilename, email):
         self.firstname = firstname
@@ -72,57 +80,57 @@ def addUser(session, firstname, lastname, profilename, email):
 firstname = 'alba'
 lastname = 'balla'
 profilename = 'balla_11'
-email = 'alba@gmail.com'
+email = 'alba12@gmail.com'
 
 addUser(session, firstname, lastname, profilename, email)
 
 
-def addPost(session, userId, postContent):
-    newpost = Posts(userId, postContent)
-    session.add(newpost)
-    session.commit()
-    print('a new post has added')
+# def addPost(session, userId, postContent):
+#     newpost = Posts(userId, postContent)
+#     session.add(newpost)
+#     session.commit()
+#     print('a new post has added')
 
 
-# create a post
-userId = '0d00279b-a078-4838-acd0-7ed7c1065b44'
-# postContent = 'leaning sql alchemy'
-# addPost(session, userId, postContent)
-allposts = session.query(Posts).filter(Posts.userId == userId).all()
-for post in allposts:
-    print(post.postContent)
-
-
-
-def addLike(userId,postId):
-    like=Likes(userId,postId)
-    session.add(like)
-    session.commit()
-    print(f'{userId} likes post {postId}')
+# # create a post
+# userId = '0d00279b-a078-4838-acd0-7ed7c1065b44'
+# # postContent = 'leaning sql alchemy'
+# # addPost(session, userId, postContent)
+# allposts = session.query(Posts).filter(Posts.userId == userId).all()
+# for post in allposts:
+#     print(post.postContent)
 
 
 
-# addLike("0a2b53c1-89a2-4715-9839-ac2b60056a04",'012d73c6-a467-4013-b92c-c55cbeec5b98')
+# def addLike(userId,postId):
+#     like=Likes(userId,postId)
+#     session.add(like)
+#     session.commit()
+#     print(f'{userId} likes post {postId}')
 
 
-# counting the likes
-postId='012d73c6-a467-4013-b92c-c55cbeec5b98'
 
-countlikes=session.query(Likes).filter(Likes.postId==postId).all()
-
-print(len(countlikes))
-
-# fetching the users who has liked the specific post
-
-# UsersLikedPost = session.query(Users,Likes).join(Likes,Users.userid==Likes.userId).filter(Likes.postId==postId).all()
-UsersLikedPost=session.query(Users,Likes).filter(Likes.postId==postId).all()
+# # addLike("0a2b53c1-89a2-4715-9839-ac2b60056a04",'012d73c6-a467-4013-b92c-c55cbeec5b98')
 
 
-unique_users = set()
+# # counting the likes
+# postId='012d73c6-a467-4013-b92c-c55cbeec5b98'
 
-for user, like in UsersLikedPost:
-    user_info = (user.firstname, user.lastname)
-    unique_users.add(user_info)
+# countlikes=session.query(Likes).filter(Likes.postId==postId).all()
 
-for firstname, lastname in unique_users:
-    print(f"{firstname} {lastname} liked the post.")
+# print(len(countlikes))
+
+# # fetching the users who has liked the specific post
+
+# # UsersLikedPost = session.query(Users,Likes).join(Likes,Users.userid==Likes.userId).filter(Likes.postId==postId).all()
+# UsersLikedPost=session.query(Users,Likes).filter(Likes.postId==postId).all()
+
+
+# unique_users = set()
+
+# for user, like in UsersLikedPost:
+#     user_info = (user.firstname, user.lastname)
+#     unique_users.add(user_info)
+
+# for firstname, lastname in unique_users:
+#     print(f"{firstname} {lastname} liked the post.")
